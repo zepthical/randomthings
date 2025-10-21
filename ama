@@ -27,7 +27,7 @@ end
 local function getUnderCFrame(zombie)
 	local root = zombie:FindFirstChild("HumanoidRootPart")
 	if not root then return end
-	local pos = root.Position - Vector3.new(0, 3, 0) -- 3 studs below
+	local pos = root.Position - Vector3.new(0, 6, 0) -- 3 studs below
 	local lookAt = Vector3.new(root.Position.X, pos.Y, root.Position.Z)
 	return CFrame.lookAt(pos, lookAt)
 end
@@ -55,40 +55,11 @@ task.spawn(function()
 					else
 						break
 					end
-					task.wait(0.5)
-				end
-			end
-		else
-			task.wait(1)
-		end
-		task.wait(0.2)
-	end
-end)	local tween = TweenService:Create(hrp, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = targetCFrame})
-	tween:Play()
-	tween.Completed:Wait()
-end
-
--- main logic
-task.spawn(function()
-	while _G.a do
-		local zombie = getClosestZombie()
-		if zombie then
-			local cf = getBehindCFrame(zombie)
-			if cf then
-				tweenTo(cf)
-				-- stay behind until gone
-				while _G.a and zombie.Parent and zombie:FindFirstChild("HumanoidRootPart") do
-					local behind = getBehindCFrame(zombie)
-					if behind then
-						hrp.CFrame = behind
-					else
-						break
-					end
 					task.wait()
 				end
 			end
 		else
-			task.wait(1) -- wait until next zombie appears
+			task.wait(1)
 		end
 		task.wait(0.2)
 	end
