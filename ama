@@ -27,7 +27,7 @@ end
 local function getBehindCFrame(zombie)
 	local root = zombie:FindFirstChild("HumanoidRootPart")
 	if not root then return end
-	local pos = root.Position - root.CFrame.LookVector * 4
+	local pos = root.Position - root.CFrame.LookVector * 6
 	local lookAt = Vector3.new(root.Position.X, pos.Y, root.Position.Z)
 	return CFrame.lookAt(pos, lookAt)
 end
@@ -55,7 +55,7 @@ task.spawn(function()
 					else
 						break
 					end
-					task.wait(0.5)
+					task.wait()
 				end
 			end
 		else
