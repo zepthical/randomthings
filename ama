@@ -1,0 +1,59 @@
+_G.a = true
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Function to find the closest zombie
+local function getClosestZombie()
+	local closest, distance = nil, math.huge
+	for _, obj in ipairs(workspace:GetChildren()) do
+		if obj.Name == "Zombie" and obj:FindFirstChild("HumanoidRootPart") then
+			local dist = (obj.HumanoidRootPart.Position - hrp.Position).Magnitude
+			if dist < distance then
+				distance = dist
+				closest = obj
+			end
+		end
+	end
+	return closest
+end
+
+-- Tween smoothly to zombie
+local function tweenTo(target)
+	if not target or not target.Parent then return end
+	local root = target:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+	
+	local goalCFrame = CFrame.new(root.Position + Vector3.new(0, 0, 0)) -- go directly to it first
+	local tween = TweenService:Create(hrp, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = goalCFrame})
+	tween:Play()
+	tween.Completed:Wait()
+end
+
+-- Loop teleport under zombie
+local function stayUnderZombie(zombie)
+	local root = zombie:FindFirstChild("HumanoidRootPart")
+	while _G.a and zombie.Parent and root do
+		hrp.CFrame = CFrame.new(root.Position - Vector3.new(0, 3, 0))
+		local lookPos = Vector3.new(root.Position.X, hrp.Position.Y, root.Position.Z)
+		hrp.CFrame = CFrame.lookAt(hrp.Position, lookPos)
+		task.wait(0.5)
+	end
+end
+
+-- Main loop
+task.spawn(function()
+	while _G.a do
+		local zombie = getClosestZombie()
+		if zombie then
+			tweenTo(zombie)
+			stayUnderZombie(zombie)
+		else
+			task.wait() -- wait for new zombies to appear
+		end
+	end
+end)
